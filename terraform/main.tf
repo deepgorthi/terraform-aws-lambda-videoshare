@@ -4,7 +4,6 @@ resource "random_id" "vb" {
 
 resource "aws_s3_bucket" "vb_upload" {
   bucket        = "svs-deep-upload-${random_id.vb.dec}"
-  # acl           = "private"
   force_destroy = true
 
   tags = {
@@ -13,9 +12,19 @@ resource "aws_s3_bucket" "vb_upload" {
   }
 }
 
+resource "aws_sns_topic" "transcoder" {
+  name = "user-updates-topic"
+}
+
+resource "aws_sns_topic_subscription" "transcoder_subscription" {
+  topic_arn = aws_sns_topic.transcoder.arn
+  protocol  = "sms"
+  endpoint  = "+17162398438"
+}
+
+
 resource "aws_s3_bucket" "vb_trans" {
   bucket        = "svs-deep-transcoded-${random_id.vb.dec}"
-  # acl           = "private"
   force_destroy = true
 
   tags = {
